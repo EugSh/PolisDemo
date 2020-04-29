@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/collage_view"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:background="#FFE673"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:id="@+id/view_border"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/collage_view"
+        android:background="#000000"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_collage_template"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:background="#FFE673"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_border"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recycler_collage_template"
+        android:id="@+id/btn_save"
+        android:text="Save"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">PolisDemo</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_gallery">Gallery</string>
+    <string name="btn_down_text">DOWN</string>
+    <string name="btn_up_text">UP</string>
+    <string name="spinner_label_prompt">Select one or more label</string>
+    <string name="spinner_sort_type_prompt">Select sorting type</string>
+    <string name="btn_labeling">Labeling</string>
+    <string name="title_collage">Collage</string>
+    <string-array name="types_sort_name">
+        <item>Day of week</item>
+        <item>Month</item>
+        <item>Year</item>
+        <item>Year month</item>
+        <item>Year month day</item>
+    </string-array>
+</resources>
