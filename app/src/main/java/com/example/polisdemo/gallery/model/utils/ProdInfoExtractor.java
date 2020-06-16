@@ -3,9 +3,14 @@ package com.example.polisdemo.gallery.model.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
+import android.util.Size;
 
 
 import com.example.polisdemo.gallery.model.dto.Geolocation;
@@ -38,6 +43,17 @@ public class ProdInfoExtractor implements PhotoInfoExtractor {
         } catch (FileNotFoundException e) {
             return null;
         }
+    }
+
+    @Override
+    public Bitmap extractRotatedBitmap(String contentUri, int orientation) {
+        return rotate(extractBitmap(contentUri), orientation);
+    }
+
+    private Bitmap rotate(Bitmap bitmap, int orientation) {
+        Matrix matrix = new Matrix();
+        matrix.setRotate(orientation);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
     }
 
     @Override
@@ -85,6 +101,33 @@ public class ProdInfoExtractor implements PhotoInfoExtractor {
     }
 
     @Override
+    public Bitmap extractThumbnail(String contentUri) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                final Bitmap thumbnail = context
+                        .getContentResolver()
+                        .loadThumbnail(Uri.parse(contentUri), new Size(64, 64), null);
+                return thumbnail.copy(thumbnail.getConfig(), true);
+            } catch (IOException e) {
+                return null;
+            }
+        } else {
+
+            try {
+                ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(Uri.parse(contentUri), "r");
+                final FileDescriptor fileDescriptor = pfd.getFileDescriptor();
+                final Bitmap thumbnail = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFileDescriptor(fileDescriptor), 64, 64);
+                return thumbnail.copy(thumbnail.getConfig(), true);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        }
+    }
+
+    @Override
     public int getRotation(String contentUri) {
         try {
             ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(Uri.parse(contentUri), "r");
@@ -106,4 +149,10 @@ public class ProdInfoExtractor implements PhotoInfoExtractor {
             return 0;
         }
     }
+
+    @Override
+    public Bitmap extractRotatedThumbnail(String contentUri, int orientation) {
+        return rotate(extractThumbnail(contentUri), orientation);
+    }
+
 }

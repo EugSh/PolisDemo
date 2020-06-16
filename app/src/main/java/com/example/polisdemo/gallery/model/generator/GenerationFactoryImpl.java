@@ -15,16 +15,28 @@ import java.util.stream.Collectors;
 
 
 public class GenerationFactoryImpl implements GenerationFactory<Photo> {
-    private final PhotoGenerator photoGenerator;
+    private static GenerationFactoryImpl instanse;
+    private PhotoGenerator photoGenerator;
     private final PhotoInfoExtractor extractor;
     private final FireBaseDBService dbService;
-    private final boolean hasReadPermission;
+    private boolean hasReadPermission;
 
-    public GenerationFactoryImpl(final Context context, final boolean hasReadPermission, final FireBaseDBService dbService) {
+    private GenerationFactoryImpl(final Context context, final boolean hasReadPermission, final FireBaseDBService dbService) {
         this.hasReadPermission = hasReadPermission;
         this.photoGenerator = hasReadPermission ? new ProdPhotoGenerator(context) : ArrayList::new;
         this.extractor = new ProdInfoExtractor(context);
         this.dbService = dbService;
+    }
+
+    public static GenerationFactory<Photo> getInstanse(final Context context, final boolean hasReadPermission, final FireBaseDBService dbService){
+        if (instanse == null) {
+            instanse = new GenerationFactoryImpl(context, hasReadPermission, dbService);
+        }
+        if ((!instanse.hasReadPermission) && hasReadPermission){
+            instanse.hasReadPermission = hasReadPermission;
+            instanse.photoGenerator = new ProdPhotoGenerator(context);
+        }
+        return instanse;
     }
 
     @Override
@@ -33,7 +45,7 @@ public class GenerationFactoryImpl implements GenerationFactory<Photo> {
             return new CategoryGeneratorImpl<>(Categories.parse(sortType), photoGenerator.generate(), extractor);
         }
         return new CategoryGeneratorImpl<>(Categories.parse(sortType),
-                dbService.getEntities(labels).stream().map(e -> new Photo(e.getContentUrl(), e.getCreationDate())).collect(Collectors.toList()),
+                dbService.getEntities(labels).stream().map(e -> new Photo(e.getContentUrl(), e.getCreationDate(), e.getOrientation())).collect(Collectors.toList()),
                 extractor);
 
     }

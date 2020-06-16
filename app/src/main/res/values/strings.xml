@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PolisDemo</string>
+    <string name="app_name">Photo Assistant</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -10,8 +10,15 @@
     <string name="spinner_sort_type_prompt">Select sorting type</string>
     <string name="btn_labeling">Labeling</string>
     <string name="title_collage">Collage</string>
+    <string name="filters">Filters</string>
+    <string name="background_color">background color</string>
+    <string name="save_to_gallery">Save to gallery</string>
+    <string name="select_label">Select label</string>
+    <string name="select_sort_type">Select sort type</string>
+    <string name="logo_title_text">Photo Assistant</string>
     <string-array name="types_sort_name">
         <item>Day of week</item>
+        <item>Day of month</item>
         <item>Month</item>
         <item>Year</item>
         <item>Year month</item>

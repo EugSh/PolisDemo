@@ -4,8 +4,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-import com.example.polisdemo.collage.dto.TransformInfo;
-import com.example.polisdemo.collage.view.ScaleGestureDetector;
+import com.example.polisdemo.collage.template.TransformInfo;
 import com.example.polisdemo.collage.utils.Vector2D;
 import com.example.polisdemo.collage.utils.MovementUtils;
 
@@ -25,6 +24,30 @@ public class MultiTouchListener implements OnTouchListener {
     public MultiTouchListener() {
         mScaleGestureDetector = new ScaleGestureDetector(
                 new ScaleGestureListener());
+    }
+
+    protected void setRandomPosition(View view) {
+
+//        TransformInfo randomInfo = new TransformInfo(Utils.generatRandomPositiveNegitiveValue(500, 0),
+//                Utils.generatRandomPositiveNegitiveValue(500, 0),
+//                Utils.generatRandomPositiveNegitiveValue(1, 0),
+//                Utils.generatRandomPositiveNegitiveValue(45, 22),
+//                Utils.generatRandomPositiveNegitiveValue(60, 0),
+//                Utils.generatRandomPositiveNegitiveValue(60, 0),
+//                0.5f,
+//                1f);
+//        TransformInfo randomInfo = new TransformInfo(150,
+//                150,
+//                0,
+//                0,
+//                Utils.generatRandomPositiveNegitiveValue(60, 0),
+//                Utils.generatRandomPositiveNegitiveValue(60, 0),
+//                0.5f,
+//                1f);
+
+//        System.out.println(randomInfo.toString());
+//
+//        MovementUtils.move(view, randomInfo);
     }
 
     @Override

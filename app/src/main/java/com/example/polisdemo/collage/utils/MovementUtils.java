@@ -2,7 +2,7 @@ package com.example.polisdemo.collage.utils;
 
 import android.view.View;
 
-import com.example.polisdemo.collage.dto.TransformInfo;
+import com.example.polisdemo.collage.template.TransformInfo;
 
 public class MovementUtils {
     private MovementUtils() {

@@ -1,35 +1,51 @@
 package com.example.polisdemo.collage.ui;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.polisdemo.MainActivity;
 import com.example.polisdemo.R;
-import com.example.polisdemo.collage.template.CollageTemplate;
-import com.example.polisdemo.collage.template.Template;
-import com.example.polisdemo.collage.ui.adapter.RecyclerViewTemplateAdapter;
+import com.example.polisdemo.collage.dto.BitmapCard;
+import com.example.polisdemo.collage.template.TemplateCollage;
+import com.example.polisdemo.collage.ui.adapter.ThumbnailAdapter;
+import com.example.polisdemo.collage.ui.adapter.ThumbnailCallback;
+import com.example.polisdemo.collage.ui.adapter.ThumbnailItem;
+import com.example.polisdemo.collage.ui.adapter.ThumbnailsManager;
+import com.example.polisdemo.collage.view.CollageView;
+import com.google.android.material.snackbar.Snackbar;
+import com.zomato.photofilters.SampleFilters;
+import com.zomato.photofilters.imageprocessors.Filter;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -43,85 +59,172 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import petrov.kristiyan.colorpicker.ColorPicker;
+
 public class CollageFragment extends Fragment {
 
     private static final String TAG = "RecyclerViewCollageFragment";
+    private static final int PERMISSION_REQUEST_CODE_WRITE = 3;
 
-    private RecyclerView recyclerViewTemplates;
-    private RelativeLayout collageView;
+    private RecyclerView recyclerViewFilters;
     private Context context;
-    private CollageTemplate template;
-    private List<Bitmap> bitmaps;
+    private List<BitmapCard> bitmaps;
+    private CollageView collageView;
     private Button btnSave;
+    private Button btnBackgroundColor;
     private Random random = new Random();
+    private ImageView selectedImage;
+    private Bitmap selectedBitmap;
+    private View mLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return super.onCreateView(inflater, container, savedInstanceState);
         final View rootView = inflater.inflate(R.layout.fragment_collage, container, false);
         rootView.setTag(TAG);
+        mLayout = container;
         context = container.getContext();
-        recyclerViewTemplates = rootView.findViewById(R.id.recycler_collage_template);
+        recyclerViewFilters = rootView.findViewById(R.id.recycler_filters);
         collageView = rootView.findViewById(R.id.collage_view);
-        rootView.post(() -> initCollage());
-        template = new CollageTemplate(context);
-        RecyclerViewTemplateAdapter adapter = new RecyclerViewTemplateAdapter(
-                template.getTemplateIcons(MainActivity.selectedImages.size()),
-                clickListener);
-        recyclerViewTemplates.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        recyclerViewTemplates.setAdapter(adapter);
+
+        collageView = rootView.findViewById(R.id.collage_view);
         btnSave = rootView.findViewById(R.id.btn_save);
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        btnSave.setOnClickListener(v -> {
+            if (checkReadPerm()) {
+                save();
+            } else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        PERMISSION_REQUEST_CODE_WRITE);
+            }
+        });
+        Handler handler = new Handler();
+        handler.post(() -> {
+            initCollage();
+            initFilters();
+        });
+        btnBackgroundColor = rootView.findViewById(R.id.btn_background_color);
+        btnBackgroundColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap bitmap = createBitmapFromView(collageView, collageView.getWidth(), collageView.getHeight());
-                try {
-                    saveImage(bitmap, "saved_collage_image_" + random.nextInt());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                ColorPicker picker = new ColorPicker(MainActivity.appCompatActivity);
+                picker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
+                    @Override
+                    public void setOnFastChooseColorListener(int position, int color) {
+                        collageView.setBackgroundColor(color);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // put code
+                    }
+                })
+                        .setDefaultColorButton(Color.parseColor("#FFE673"))
+                        .setColumns(5)
+                        .show();
             }
         });
         return rootView;
     }
 
-    private void initRecyclerView() {
+    private void save(){
+        Bitmap bitmap = createBitmapFromView(collageView, collageView.getWidth(), collageView.getHeight());
+        try {
+            saveImage(bitmap, "saved_collage_image_" + random.nextInt());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void initFilters() {
+        final List<ThumbnailItem> thumbnailItems = new ArrayList<>();
+        Bitmap thumbImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.caption), 640, 640, false);
+        thumbnailItems.add(new ThumbnailItem(thumbImage, new Filter()));
+        thumbnailItems.add(new ThumbnailItem(thumbImage, SampleFilters.getStarLitFilter()));
+        thumbnailItems.add(new ThumbnailItem(thumbImage, SampleFilters.getBlueMessFilter()));
+        thumbnailItems.add(new ThumbnailItem(thumbImage, SampleFilters.getLimeStutterFilter()));
+        thumbnailItems.add(new ThumbnailItem(thumbImage, SampleFilters.getNightWhisperFilter()));
+        thumbnailItems.add(new ThumbnailItem(thumbImage, SampleFilters.getAweStruckVibeFilter()));
+        ThumbnailsManager.clearThumbs();
+        thumbnailItems.forEach(t -> ThumbnailsManager.addThumb(t));
+        ThumbnailAdapter adapter = new ThumbnailAdapter(ThumbnailsManager.processThumbs(context), new ThumbnailCallback() {
+            @Override
+            public void onThumbnailClick(Filter filter) {
+                final Bitmap bitmap = filter.processFilter(selectedBitmap.copy(Bitmap.Config.ARGB_8888, true));
+                selectedImage.setImageBitmap(bitmap);
+
+            }
+        });
+        recyclerViewFilters.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
+        recyclerViewFilters.setAdapter(adapter);
     }
 
     private void initCollage() {
-        template.setParentWidth(collageView.getWidth());
-        template.setParentHeight(collageView.getHeight());
+        collageView.setOnDoubleTorchListener((v, event) -> {
+            v.performClick();
+            collageView.removeView(v);
+            collageView.addView(v);
+            return true;
+        });
+        collageView.setSingleTouchClickListener((v, event) -> {
+            v.performClick();
+            selectedImage = (ImageView) v;
+            selectedBitmap = ((BitmapDrawable) selectedImage.getDrawable()).getBitmap();
+            recyclerViewFilters.getAdapter().notifyDataSetChanged();
+            collageView.removeView(v);
+            collageView.addView(v);
+            return true;
+        });
         bitmaps = getBitmaps(MainActivity.selectedImages);
+        bitmaps.forEach((b) -> collageView.addCard(rotateIfNeed(b.getBitmap(), b.getOrientation())));
+        TemplateCollage collage = new TemplateCollage(collageView.getWidth(), collageView.getHeight());
+        collage.process(collageView.getListCards());
+
+        selectedBitmap = bitmaps.isEmpty() ? null : bitmaps.get(0).getBitmap();
+        selectedImage = collageView.getChildCount() == 0 ? null : (ImageView) collageView.getChildAt(0);
         displayImages(0);
     }
 
-    private void displayImages(int templateId) {
-        final List<Template> params = template.getTemplates(MainActivity.selectedImages.size()).get();
-        collageView.removeAllViews();
-        if (bitmaps.isEmpty()) {
-            return;
+    private Bitmap rotateIfNeed(final Bitmap b, final int orientation) {
+        if (orientation == 0) {
+            Bitmap.Config config = b.getConfig();
+            return b.copy(config, true);
         }
-        for (View v : params.get(templateId).getTemplates(context, bitmaps)) {
-            collageView.addView(v);
-        }
+        final Matrix matrix = new Matrix();
+        matrix.preRotate(orientation);
+        return Bitmap.createBitmap( b, 0, 0, b.getWidth(), b.getHeight(), matrix,false);
     }
 
-    private List<Bitmap> getBitmaps(final Collection<String> uris) {
-        final List<Bitmap> result = new ArrayList<>(uris.size());
+    private void displayImages(int templateId) {
+    }
+
+    private List<BitmapCard> getBitmaps(final Collection<String> uris) {
+        final List<BitmapCard> result = new ArrayList<>(uris.size());
         final ContentResolver resolver = context.getContentResolver();
         try {
             for (final String uri : uris) {
                 final ParcelFileDescriptor pfd = resolver.openFileDescriptor(Uri.parse(uri), "r");
                 final FileDescriptor fileDescriptor = pfd.getFileDescriptor();
-                result.add(BitmapFactory.decodeFileDescriptor(fileDescriptor));
+                final ExifInterface exifInterface = new ExifInterface(resolver
+                        .openFileDescriptor(Uri.parse(uri), "r")
+                        .getFileDescriptor());
+                result.add(new BitmapCard(BitmapFactory.decodeFileDescriptor(fileDescriptor),
+                        exifToDegrees(exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL))));
             }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return result;
+    }
+
+    private static int exifToDegrees(int exifOrientation) {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) { return 90; }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {  return 180; }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {  return 270; }
+        return 0;
     }
 
     private final View.OnClickListener clickListener = new View.OnClickListener() {
@@ -164,10 +267,31 @@ public class CollageFragment extends Fragment {
             fos = resolver.openOutputStream(Objects.requireNonNull(imageUri));
         } else {
             String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+//            System.out.println(imagesDir);
             File image = new File(imagesDir, name + ".jpeg");
             fos = new FileOutputStream(image);
         }
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         Objects.requireNonNull(fos).close();
+    }
+
+    private boolean checkReadPerm() {
+        final int readPerm = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return readPerm == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE_WRITE) {
+            if (grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                save();
+            } else {
+                Snackbar.make(mLayout, "Не возможно сохранить, так как недостаточно прав.",
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+        }
     }
 }

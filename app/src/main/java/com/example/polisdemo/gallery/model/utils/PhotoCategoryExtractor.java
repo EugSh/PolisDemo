@@ -28,6 +28,21 @@ public interface PhotoCategoryExtractor {
         }
     }
 
+    class DayOfMonth implements PhotoCategoryExtractor{
+
+        @Override
+        public String extract(PhotoInfoExtractor infoExtractor, Photo photo) {
+            final GregorianCalendar calendar = new GregorianCalendar();
+            calendar.setTime(photo.getCreationDate());
+            return String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        }
+
+        @Override
+        public Comparator<String> getComparator() {
+            return CategoryComparator.DAY_OF_MONTH;
+        }
+    }
+
     class Month implements PhotoCategoryExtractor {
         @Override
         public String extract(PhotoInfoExtractor infoExtractor, Photo photo) {

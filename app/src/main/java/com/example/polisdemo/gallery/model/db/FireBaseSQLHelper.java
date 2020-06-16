@@ -22,8 +22,9 @@ public class FireBaseSQLHelper extends SQLiteOpenHelper {
                 + LabelEntity.COLUMN_CONTENT_URI + " TEXT NOT NULL,"
                 + LabelEntity.COLUMN_CREATION_DATE + " INTEGER NOT NULL,"
                 + LabelEntity.COLUMN_PHOTO_DATE + " INTEGER NOT NULL,"
-                + LabelEntity.COLUMN_CONFIDENCE + " REAL NOT NULL," +
-                "UNIQUE(" + LabelEntity.COLUMN_LABEL + ", " + LabelEntity.COLUMN_CONTENT_URI + "));");
+                + LabelEntity.COLUMN_CONFIDENCE + " REAL NOT NULL,"
+                + LabelEntity.COLUMN_ORIENTATION + " INTEGER NOT NULL,"
+                + "UNIQUE(" + LabelEntity.COLUMN_LABEL + ", " + LabelEntity.COLUMN_CONTENT_URI + "));");
     }
 
     @Override

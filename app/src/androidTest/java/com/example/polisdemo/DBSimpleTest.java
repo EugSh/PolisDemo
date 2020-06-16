@@ -48,14 +48,14 @@ public class DBSimpleTest {
 
     @Test
     public void insertRow() {
-        LabelEntity entity = new LabelEntity("l1", "uri1", new Date(), new Date(), 0.5f);
+        LabelEntity entity = new LabelEntity("l1", "uri1", new Date(), new Date(), 0.5f, 0);
         service.putEntity(entity);
         Assert.assertEquals("Db contains more than 1 entity", 1, service.size());
     }
 
     @Test
     public void insertAndGetRow() {
-        LabelEntity expected = new LabelEntity("l1", "uri1", new Date(), new Date(), 0.5f);
+        LabelEntity expected = new LabelEntity("l1", "uri1", new Date(), new Date(), 0.5f, 0);
         long id = service.putEntity(expected);
         Optional<LabelEntity> optionalActual = service.getEntity(id);
         Assert.assertTrue("Entity not retrieved by id " + id, optionalActual.isPresent());
@@ -72,7 +72,7 @@ public class DBSimpleTest {
         List<LabelEntity> entities = new ArrayList<>(count);
         Set<String> labels = new HashSet<>();
         for (int i = 0; i < count; i++) {
-            entities.add(new LabelEntity("l" + (i % 2), "uri" + i, new Date(), new Date(), i));
+            entities.add(new LabelEntity("l" + (i % 2), "uri" + i, new Date(), new Date(), i, 0));
             labels.add("l" + (i % 2));
         }
         service.putAllEntities(entities);
@@ -81,7 +81,7 @@ public class DBSimpleTest {
             List<LightLabelEntity> actual = service.getEntities(label);
             List<LightLabelEntity> expected = entities.stream()
                     .filter(entity -> entity.getLabel().equals(label))
-                    .map(entity -> new LightLabelEntity(entity.getContentUri(), entity.getPhotoDate()))
+                    .map(entity -> new LightLabelEntity(entity.getContentUri(), entity.getPhotoDate(), 0))
                     .collect(Collectors.toList());
             Assert.assertTrue("service.getEntities did not return entities by label " + label, actual.containsAll(expected));
         }
@@ -97,15 +97,15 @@ public class DBSimpleTest {
         labels.add("l3");
 
         for (int i = 0; i < count; i++) {
-            entities.add(new LabelEntity("l1", "uri" + i, new Date(), new Date(), i));
-            entities.add(new LabelEntity("l2", "uri" + i, new Date(), new Date(), i));
-            entities.add(new LabelEntity("l3", "uri" + i, new Date(), new Date(), i));
+            entities.add(new LabelEntity("l1", "uri" + i, new Date(), new Date(), i, 0));
+            entities.add(new LabelEntity("l2", "uri" + i, new Date(), new Date(), i , 0));
+            entities.add(new LabelEntity("l3", "uri" + i, new Date(), new Date(), i, 0));
         }
         service.putAllEntities(entities);
         Assert.assertEquals("Count of rows not correct", entities.size(), service.size());
         List<LightLabelEntity> actual = service.getEntities(labels);
         Set<LightLabelEntity> expected = entities.stream()
-                .map(entity -> new LightLabelEntity(entity.getContentUri(), entity.getPhotoDate()))
+                .map(entity -> new LightLabelEntity(entity.getContentUri(), entity.getPhotoDate(), 0))
                 .collect(Collectors.toSet());
         Assert.assertTrue("service.getEntities did not return entities by labels " + labels, actual.containsAll(expected));
     }

@@ -19,23 +19,25 @@ import androidx.appcompat.widget.AppCompatImageView;
  */
 public class CardView extends AppCompatImageView {
 
-    private static final int PADDING = 8;
-//    private static final float STROKE_WIDTH = 8.0f;
+    private static final int PADDING = 0;
+    private static final float STROKE_WIDTH = 30.0f;
 
 //    private Paint mBorderPaint;
     private MultiTouchListener mtl;
     private GestureDetector gestureListener;
     private OnTouchListener doubleClickListener;
+    private OnTouchListener singleTouchClickListener;
+    private Paint mBorderPaint;
 
     public CardView(Context context) {
         this(context, null);
-        init(context);
+//        init(context);
     }
 
     public CardView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
-        init(context);
-        setPadding(PADDING, PADDING, PADDING, PADDING);
+//        init(context);
+//        setPadding(PADDING, PADDING, PADDING, PADDING);
     }
 
     public CardView(Context context, AttributeSet attrs, int defStyle) {
@@ -58,18 +60,23 @@ public class CardView extends AppCompatImageView {
 
 
     private void initBorderPaint() {
-//        mBorderPaint = new Paint();
-//        mBorderPaint.setAntiAlias(true);
-//        mBorderPaint.setStyle(Paint.Style.STROKE);
-//        mBorderPaint.setColor(Color.WHITE);
-//        mBorderPaint.setStrokeWidth(STROKE_WIDTH);
+        mBorderPaint = new Paint();
+        mBorderPaint.setAntiAlias(true);
+        mBorderPaint.setStyle(Paint.Style.STROKE);
+        mBorderPaint.setColor(Color.WHITE);
+        mBorderPaint.setStrokeWidth(STROKE_WIDTH);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+//        mBorderPaint.setStyle(Paint.Style.STROKE);
+//
 //        canvas.drawRect(PADDING, PADDING, getWidth() - PADDING, getHeight()
 //                - PADDING, mBorderPaint);
+//        mBorderPaint.setStyle(Paint.Style.FILL);
+//        canvas.drawRect(0, getHeight() - PADDING - 90, getWidth() - PADDING,
+//                getHeight() - PADDING, mBorderPaint);
     }
 
     /**
@@ -84,6 +91,10 @@ public class CardView extends AppCompatImageView {
 
     public void setOnDoubleTouchListener(OnTouchListener doubleClickListener) {
         this.doubleClickListener = doubleClickListener;
+    }
+
+    public void setSingleTouchClickListener(OnTouchListener singlTouchClickListener) {
+        this.singleTouchClickListener = singlTouchClickListener;
     }
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -108,8 +119,9 @@ public class CardView extends AppCompatImageView {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            System.out.println(cardView.getLayoutParams().width);
-            System.out.println(cardView.getLayoutParams().height);
+            if (singleTouchClickListener != null) {
+                singleTouchClickListener.onTouch(cardView, e);
+            }
             return true;
         }
     }

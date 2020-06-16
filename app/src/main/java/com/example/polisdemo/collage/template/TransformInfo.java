@@ -1,14 +1,20 @@
-package com.example.polisdemo.collage.dto;
+package com.example.polisdemo.collage.template;
+
+import com.google.android.gms.common.util.JsonUtils;
 
 public class TransformInfo {
-    private final float deltaX;
-    private final float deltaY;
-    private final float deltaScale;
-    private final float deltaAngle;
-    private final float pivotX;
-    private final float pivotY;
-    private final float minimumScale;
-    private final float maximumScale;
+    float deltaX;
+    float deltaY;
+    float deltaScale;
+    float deltaAngle;
+    float pivotX;
+    float pivotY;
+    float minimumScale;
+    float maximumScale;
+
+    public TransformInfo() {
+        this(0, 0, 0, 0, 0, 0, 0, 0);
+    }
 
     public TransformInfo(float deltaX, float deltaY, float deltaScale, float deltaAngle, float pivotX, float pivotY, float minimumScale, float maximumScale) {
         this.deltaX = deltaX;
@@ -51,5 +57,19 @@ public class TransformInfo {
 
     public float getMaximumScale() {
         return maximumScale;
+    }
+
+    @Override
+    public String toString() {
+        return "TransformInfo{" +
+                "deltaX=" + deltaX +
+                ", deltaY=" + deltaY +
+                ", deltaScale=" + deltaScale +
+                ", deltaAngle=" + deltaAngle +
+                ", pivotX=" + pivotX +
+                ", pivotY=" + pivotY +
+                ", minimumScale=" + minimumScale +
+                ", maximumScale=" + maximumScale +
+                '}';
     }
 }

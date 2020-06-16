@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "413888527303",
+    "firebase_url": "https://polisdemo-8e9ed.firebaseio.com",
+    "project_id": "polisdemo-8e9ed",
+    "storage_bucket": "polisdemo-8e9ed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413888527303:android:505ab750235c3b6a78f7e2",
+        "android_client_info": {
+          "package_name": "com.example.polisdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413888527303-7d6h9c1f3853n251hc401muelrhlup2k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.polisdemo",
+            "certificate_hash": "9474d697657d40169092090d00a6b9cc71992ce1"
+          }
+        },
+        {
+          "client_id": "413888527303-i9a84cpkft1f79bh07kne83hlr2mhq4j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvUYqKuVCTvY5kY3ukheTXvjR-SLL9Kko"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413888527303-i9a84cpkft1f79bh07kne83hlr2mhq4j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

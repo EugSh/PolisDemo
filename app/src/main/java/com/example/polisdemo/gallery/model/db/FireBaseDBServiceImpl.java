@@ -26,7 +26,8 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
                 LabelEntity.COLUMN_CONTENT_URI,
                 LabelEntity.COLUMN_CREATION_DATE,
                 LabelEntity.COLUMN_PHOTO_DATE,
-                LabelEntity.COLUMN_CONFIDENCE};
+                LabelEntity.COLUMN_CONFIDENCE,
+                LabelEntity.COLUMN_ORIENTATION};
         final String selection = LabelEntity._ID + " = ? ";
         final String[] selectionArgs = new String[]{String.valueOf(id)};
         // Делаем запрос
@@ -44,6 +45,7 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
                 final int creationDateColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_CREATION_DATE);
                 final int photoDateColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_PHOTO_DATE);
                 final int confidenceColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_CONFIDENCE);
+                final int orientationId = cursor.getColumnIndex(LabelEntity.COLUMN_ORIENTATION);
 
                 if (cursor.moveToNext()) {
                     final String label = cursor.getString(labelColumnIndex);
@@ -51,7 +53,8 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
                     final Date creationDate = new Date(cursor.getLong(creationDateColumnIndex));
                     final Date photoDate = new Date(cursor.getLong(photoDateColumnIndex));
                     final float confidence = cursor.getFloat(confidenceColumnIndex);
-                    return Optional.of(new LabelEntity(id, label, contentUri, creationDate, photoDate, confidence));
+                    final int orientation = cursor.getInt(orientationId);
+                    return Optional.of(new LabelEntity(id, label, contentUri, creationDate, photoDate, confidence, orientation));
                 }
             }
         }
@@ -63,7 +66,8 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
         final String[] projection = {
                 LabelEntity.COLUMN_CONTENT_URI,
-                LabelEntity.COLUMN_PHOTO_DATE};
+                LabelEntity.COLUMN_PHOTO_DATE,
+                LabelEntity.COLUMN_ORIENTATION};
         final String selection = LabelEntity.COLUMN_LABEL + " = ? ";
         final String[] selectionArgs = new String[]{label};
         final List<LightLabelEntity> result = new ArrayList<>();
@@ -78,10 +82,12 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
             if (cursor != null) {
                 final int contentUriColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_CONTENT_URI);
                 final int creationDateColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_PHOTO_DATE);
+                final int orientationId = cursor.getColumnIndex(LabelEntity.COLUMN_ORIENTATION);
                 while (cursor.moveToNext()) {
                     final String contentUri = cursor.getString(contentUriColumnIndex);
                     final long date = cursor.getLong(creationDateColumnIndex);
-                    result.add(new LightLabelEntity(contentUri, new Date(date)));
+                    final int orientation = cursor.getInt(orientationId);
+                    result.add(new LightLabelEntity(contentUri, new Date(date), orientation));
                 }
             }
         }
@@ -97,7 +103,7 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
         for (final String label : labels) {
             i++;
             builder.append(String.format(selectTemplate,
-                    String.format("%s, %s", LabelEntity.COLUMN_CONTENT_URI, LabelEntity.COLUMN_PHOTO_DATE),
+                    String.format("%s, %s, %s", LabelEntity.COLUMN_CONTENT_URI, LabelEntity.COLUMN_PHOTO_DATE, LabelEntity.COLUMN_ORIENTATION),
                     LabelEntity.TABLE_NAME,
                     LabelEntity.COLUMN_LABEL,
                     label));
@@ -111,10 +117,13 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
             if (cursor != null) {
                 final int contentUriColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_CONTENT_URI);
                 final int creationDateColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_PHOTO_DATE);
+                final int orientationId = cursor.getColumnIndex(LabelEntity.COLUMN_ORIENTATION);
                 while (cursor.moveToNext()) {
                     final String contentUri = cursor.getString(contentUriColumnIndex);
                     final long date = cursor.getLong(creationDateColumnIndex);
-                    result.add(new LightLabelEntity(contentUri, new Date(date)));
+
+                    final int orientation = cursor.getInt(orientationId);
+                    result.add(new LightLabelEntity(contentUri, new Date(date), orientation));
                 }
             }
         }
@@ -145,6 +154,7 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
         values.put(LabelEntity.COLUMN_CONTENT_URI, entity.getContentUri());
         values.put(LabelEntity.COLUMN_CREATION_DATE, entity.getDate().getTime());
         values.put(LabelEntity.COLUMN_CONFIDENCE, entity.getConfidence());
+        values.put(LabelEntity.COLUMN_ORIENTATION, entity.getOrientation());
         try {
             return db.insertOrThrow(LabelEntity.TABLE_NAME, null, values);
         } catch (SQLException e) {
@@ -165,6 +175,7 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
                 values.put(LabelEntity.COLUMN_CREATION_DATE, entity.getDate().getTime());
                 values.put(LabelEntity.COLUMN_PHOTO_DATE, entity.getPhotoDate().getTime());
                 values.put(LabelEntity.COLUMN_CONFIDENCE, entity.getConfidence());
+                values.put(LabelEntity.COLUMN_ORIENTATION, entity.getOrientation());
                 db.insertOrThrow(LabelEntity.TABLE_NAME, null, values);
             }
             db.setTransactionSuccessful();
@@ -189,7 +200,8 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
                 LabelEntity.COLUMN_CONTENT_URI,
                 LabelEntity.COLUMN_CREATION_DATE,
                 LabelEntity.COLUMN_PHOTO_DATE,
-                LabelEntity.COLUMN_CONFIDENCE};
+                LabelEntity.COLUMN_CONFIDENCE,
+                LabelEntity.COLUMN_ORIENTATION};
         final String sortOrder = LabelEntity.COLUMN_CREATION_DATE + " DESC";
         try (Cursor cursor = db.query(
                 LabelEntity.TABLE_NAME,
@@ -207,6 +219,7 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
                 final int photoDateColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_PHOTO_DATE);
                 final int confidenceColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_CONFIDENCE);
 
+                final int orientationId = cursor.getColumnIndex(LabelEntity.COLUMN_ORIENTATION);
                 if (cursor.moveToNext()) {
                     final long id = cursor.getLong(idColumnIndex);
                     final String label = cursor.getString(labelColumnIndex);
@@ -214,7 +227,8 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
                     final Date creationDate = new Date(cursor.getLong(creationDateColumnIndex));
                     final Date photoDate = new Date(cursor.getLong(photoDateColumnIndex));
                     final float confidence = cursor.getFloat(confidenceColumnIndex);
-                    return Optional.of(new LabelEntity(id, label, contentUri, creationDate, photoDate, confidence));
+                    final int orientation = cursor.getInt(orientationId);
+                    return Optional.of(new LabelEntity(id, label, contentUri, creationDate, photoDate, confidence, orientation));
                 }
             }
         }

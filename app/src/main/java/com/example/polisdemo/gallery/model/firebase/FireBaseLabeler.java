@@ -9,8 +9,12 @@ import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import androidx.annotation.NonNull;
+
+import com.example.polisdemo.MainActivity;
 import com.example.polisdemo.gallery.model.db.LabelEntity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
@@ -45,10 +49,13 @@ public class FireBaseLabeler {
 
     public CompletableFuture<List<LabelEntity>> getLabelsV2() {
         final String[] projection = {MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DATE_TAKEN};
+                MediaStore.Images.Media.DATE_TAKEN,
+                MediaStore.Video.Media.ORIENTATION};
         final String sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC";
-        return CompletableFuture.supplyAsync(() -> {
-            final List<LabelEntity> result = new CopyOnWriteArrayList<>();
+        final List<LabelEntity> resultLabels = new CopyOnWriteArrayList<>();
+        final CompletableFuture<List<LabelEntity>> future = new CompletableFuture<>();
+        CompletableFuture.supplyAsync(() -> {
+            final List<CompletableFuture<List<LabelEntity>>> result = new CopyOnWriteArrayList<>();
             try (Cursor cursor = resolver.query(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     projection,
@@ -57,33 +64,81 @@ public class FireBaseLabeler {
                     sortOrder)) {
                 final int idColumn = cursor.getColumnIndex(MediaStore.Images.Media._ID);
                 final int dateAddedColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
+                final int orientationId = cursor.getColumnIndex(MediaStore.Video.Media.ORIENTATION);
                 while (cursor.moveToNext()) {
                     final long id = cursor.getLong(idColumn);
                     final long date = cursor.getLong(dateAddedColumn);
+                    final int orientation = cursor.getInt(orientationId);
                     if (date < newestDate.getTime()) {
                         break;
                     }
                     final Uri contentUri = ContentUris.withAppendedId(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
                     try {
+//                        System.out.println("1");
                         final Bitmap bitmap = BitmapFactory.decodeFileDescriptor(resolver
                                 .openFileDescriptor(contentUri, "r")
                                 .getFileDescriptor());
+//                        System.out.println("2");
                         final FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+//                        System.out.println("3");
+                        final CompletableFuture<List<LabelEntity>> futureList = new CompletableFuture<>();
+                        result.add(futureList);
+//                        System.out.println("4");
                         labeler.processImage(image)
                                 .addOnSuccessListener(labels -> {
-                                    final List<LabelEntity> entities = new ArrayList<>(labels.size());
-                                    for (final FirebaseVisionImageLabel label : labels) {
-                                        entities.add(new LabelEntity(label.getText(), contentUri.toString(), new Date(), new Date(date), label.getConfidence()));
+                                    if (labels.isEmpty()) {
+                                        futureList.complete(new ArrayList<>());
                                     }
-                                    result.addAll(entities);
-                                });
+                                    final AtomicInteger count = new AtomicInteger(labels.size());
+                                    final List<LabelEntity> entities = new CopyOnWriteArrayList<>();
+                                    for (final FirebaseVisionImageLabel label : labels) {
+                                        CompletableFuture<String> text = MainActivity.translate(label.getText());
+                                        text.thenApply(t ->
+                                                new LabelEntity(t,
+                                                        contentUri.toString(),
+                                                        new Date(),
+                                                        new Date(date),
+                                                        label.getConfidence(),
+                                                        orientation)
+                                        ).thenAccept(l -> {
+                                            entities.add(l);
+                                            count.decrementAndGet();
+                                            if (count.compareAndSet(0, -1)) {
+//                                                System.out.println("!@#$%^&*()");
+                                                futureList.complete(entities);
+                                            }
+                                        });
+                                    }
+                                })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             }
             return result;
+        }).thenAccept(l -> {
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            if (l.isEmpty()) {
+
+                System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+                future.complete(new ArrayList<>());
+            }
+            final AtomicInteger count = new AtomicInteger(l.size());
+            l.forEach(e -> e.thenAccept(list -> {
+                resultLabels.addAll(list);
+                count.decrementAndGet();
+                if (count.compareAndSet(0, -1)) {
+                    future.complete(resultLabels);
+                }
+            }));
         });
+        return future;
     }
 }

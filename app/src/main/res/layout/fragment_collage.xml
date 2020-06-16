@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <com.example.polisdemo.collage.view.CollageView
         android:id="@+id/collage_view"
         android:layout_width="400dp"
         android:layout_height="400dp"
         android:background="#FFE673"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="@dimen/margin_small"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
@@ -20,25 +21,58 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/collage_view"
-        android:background="#000000"/>
+        android:layout_margin="@dimen/margin_small"
+        android:background="@color/colorPrimary"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_collage_template"
+    <TextView
+        android:layout_margin="@dimen/margin_small"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:background="#FFE673"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_border"
-        />
-
-    <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/text_view_title_filter"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recycler_collage_template"
+        app:layout_constraintTop_toBottomOf="@id/view_border"
+        android:textSize="16dp"
+        android:text="@string/filters"
+        android:textColor="@color/black"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_filters"
+        android:layout_margin="@dimen/margin_small"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:background="@color/design_default_color_background"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_title_filter"
+        />
+
+    <Button
+        android:layout_width="120dp"
+        android:layout_height="24dp"
+        android:id="@+id/btn_background_color"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recycler_filters"
+        android:padding="4dp"
+        android:text="@string/background_color"
+        android:textSize="10dp"
+        android:layout_margin="@dimen/margin_small"
+        android:background="@drawable/mybutton"
+        />
+
+    <Button
+        android:layout_width="120dp"
+        android:layout_height="24dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_background_color"
         android:id="@+id/btn_save"
-        android:text="Save"/>
+        android:textSize="10dp"
+        android:padding="0dp"
+        android:layout_margin="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:background="@drawable/mybutton"
+        android:text="@string/save_to_gallery"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

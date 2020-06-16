@@ -12,25 +12,32 @@ public class LabelEntity implements BaseColumns {
     public static final String COLUMN_CREATION_DATE = "creation_date";
     public static final String COLUMN_PHOTO_DATE = "photo_date";
     public static final String COLUMN_CONFIDENCE = "confidence";
+    public static final String COLUMN_ORIENTATION = "orientation";
 
     private long id;
-    private final String label;
+    private String label;
     private final String contentUri;
     private final Date date;
     private final float confidence;
     private final Date photoDate;
+    private final int orientation;
 
-    LabelEntity(long id, String label, String contentUri, Date date, Date photoDate, float confidence) {
+    LabelEntity(long id, String label, String contentUri, Date date, Date photoDate, float confidence, int orientation) {
         this.id = id;
         this.label = label;
         this.contentUri = contentUri;
         this.date = date;
         this.confidence = confidence;
         this.photoDate = photoDate;
+        this.orientation = orientation;
     }
 
-    public LabelEntity(String label, String contentUri, Date date, Date photoDate, float confidence) {
-        this(-1, label, contentUri, date, photoDate, confidence);
+    public LabelEntity(String label, String contentUri, Date date, Date photoDate, float confidence, int orientation) {
+        this(-1, label, contentUri, date, photoDate, confidence, orientation);
+    }
+
+    public int getOrientation() {
+        return orientation;
     }
 
     public long getId() {
@@ -55,6 +62,10 @@ public class LabelEntity implements BaseColumns {
 
     public Date getPhotoDate() {
         return photoDate;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     @Override

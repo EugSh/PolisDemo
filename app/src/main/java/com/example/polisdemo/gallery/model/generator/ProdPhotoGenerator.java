@@ -27,7 +27,9 @@ public class ProdPhotoGenerator implements PhotoGenerator {
         if (!result.isEmpty()) {
             return result;
         }
-        final String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_TAKEN};
+        final String[] projection = {MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_TAKEN,
+                MediaStore.Images.Media.ORIENTATION};
         final String sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC";
         try (Cursor cursor = context.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -37,12 +39,15 @@ public class ProdPhotoGenerator implements PhotoGenerator {
                 sortOrder)) {
             int idColumn = cursor.getColumnIndex(MediaStore.Images.Media._ID);
             int dateId = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
+            int orientationId = cursor.getColumnIndex(MediaStore.Images.Media.ORIENTATION);
             while (cursor.moveToNext()) {
                 long id = cursor.getLong(idColumn);
                 long date = cursor.getLong(dateId);
+                int orientation = cursor.getInt(orientationId);
                 Uri contentUri = ContentUris.withAppendedId(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                result.add(new Photo(contentUri.toString(), new Date(date)));
+
+                result.add(new Photo(contentUri.toString(), new Date(date), orientation));
             }
             return result;
         }

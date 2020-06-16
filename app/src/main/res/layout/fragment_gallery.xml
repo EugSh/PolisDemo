@@ -10,43 +10,98 @@
     <Button
         android:id="@+id/btn_do_index"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:background="@drawable/mybutton"
         android:padding="0dp"
         android:text="@string/btn_labeling"
-        app:layout_constraintBottom_toTopOf="@id/spinner_sort_type"
+        android:textSize="12dp"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/view_border_1"
         app:layout_constraintLeft_toRightOf="@id/spinner_labels"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label_multispinner"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_do_index"
+        android:text="@string/select_label"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_small"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        />
 
     <com.thomashaertel.widget.MultiSpinner
         android:id="@+id/spinner_labels"
-        android:layout_width="300dp"
+        android:layout_width="180dp"
         android:layout_height="20dp"
-        android:prompt="@string/spinner_label_prompt"
+        android:layout_marginStart="@dimen/margin_large"
         android:spinnerMode="dialog"
-        app:layout_constraintBottom_toTopOf="@id/spinner_sort_type"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/view_border_1"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/label_spinner"
         app:layout_constraintRight_toLeftOf="@id/btn_do_index"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:id="@+id/view_border_1"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/spinner_sort_type"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner_labels"></View>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label_spinner"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_border_1"
+        android:text="@string/select_sort_type"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_small"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        />
+
     <Spinner
         android:id="@+id/spinner_sort_type"
-        android:layout_width="300dp"
+        android:layout_width="180dp"
         android:layout_height="20dp"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
         android:prompt="@string/spinner_sort_type_prompt"
         android:spinnerMode="dialog"
+        app:layout_constraintBottom_toTopOf="@id/view_border_2"
+        app:layout_constraintLeft_toRightOf="@id/label_spinner"
+        app:layout_constraintTop_toBottomOf="@id/view_border_1" />
+
+    <View
+        android:id="@+id/view_border_2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@id/recycler_view_category"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_do_index" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner_sort_type"></View>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="@dimen/margin_small"
         android:id="@+id/recycler_view_category"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="474dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spinner_sort_type" />
+        app:layout_constraintTop_toBottomOf="@id/view_border_2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

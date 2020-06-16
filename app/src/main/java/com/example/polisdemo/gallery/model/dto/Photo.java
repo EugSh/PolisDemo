@@ -6,11 +6,24 @@ import java.util.Objects;
 public class Photo {
     private final String contentUri;
     private final Date creationDate;
+    private final int orientation;
     private boolean isSelected;
 
-    public Photo(String contentUri, Date creationDate) {
+    public Photo(String contentUri, Date creationDate, int orientation) {
         this.contentUri = contentUri;
         this.creationDate = creationDate;
+        this.orientation = orientation;
+    }
+
+    public Photo(String contentUri, Date creationDate, int orientation, boolean isSelected) {
+        this.contentUri = contentUri;
+        this.creationDate = creationDate;
+        this.orientation = orientation;
+        this.isSelected = isSelected;
+    }
+
+    public int getOrientation() {
+        return orientation;
     }
 
     public Date getCreationDate() {

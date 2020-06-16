@@ -37,6 +37,8 @@ public class CategoryComparator {
 
     public static final Comparator<String> DAY_OF_WEEK = Comparator.<String, Integer>comparing(dayOfWeek::get);
 
+    public static final Comparator<String> DAY_OF_MONTH = Comparator.<String, Integer>comparing(Integer::parseInt);
+
     public static final Comparator<String> MONTH = Comparator.<String, Integer>comparing(month::get);
 
     public static final Comparator<String> YEAR = Comparator.<String, Integer>comparing(Integer::parseInt).reversed();
@@ -49,4 +51,5 @@ public class CategoryComparator {
             .reversed()
             .thenComparing(s -> Integer.parseInt(s.split(" ")[2]))
             .reversed();
+
 }
