@@ -130,6 +130,38 @@ public class FireBaseDBServiceImpl implements FireBaseDBService {
         return result;
     }
 
+//    select t1.* from posts t1
+//    where (select count(*) from posts t2 where t1.user_id=t2.user_id and t2.date_added > t1.date_added) < 3;
+
+    @Override
+    public List<LightLabelEntityV2> getOneEntitiesForEachLabel() {
+        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        final List<LightLabelEntityV2> result = new ArrayList<>();
+        final String returnColumn = String.format("t1.%s, t1.%s, t1.%s, t1.%s", LabelEntity.COLUMN_LABEL, LabelEntity.COLUMN_CONTENT_URI, LabelEntity.COLUMN_CREATION_DATE, LabelEntity.COLUMN_ORIENTATION);
+        try (Cursor cursor = db.rawQuery("select " + returnColumn + " from " + LabelEntity.TABLE_NAME + " as t1" +
+                        " where ( select count(*) from " + LabelEntity.TABLE_NAME + " as t2 " +
+                        "where t1." + LabelEntity.COLUMN_LABEL + "=t2." + LabelEntity.COLUMN_LABEL + " " +
+//                        "and t1." + LabelEntity.COLUMN_CONTENT_URI + "=t2." + LabelEntity.COLUMN_CONTENT_URI + " " +
+                        "and t2." + LabelEntity.COLUMN_CREATION_DATE + ">t1." + LabelEntity.COLUMN_CREATION_DATE + ") < 1",
+                null)) {
+            if (cursor != null) {
+                final int labelColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_LABEL);
+                final int contentUriColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_CONTENT_URI);
+                final int creationDateColumnIndex = cursor.getColumnIndex(LabelEntity.COLUMN_CREATION_DATE);
+                final int orientationId = cursor.getColumnIndex(LabelEntity.COLUMN_ORIENTATION);
+                while (cursor.moveToNext()) {
+                    final String label = cursor.getString(labelColumnIndex);
+                    final String contentUri = cursor.getString(contentUriColumnIndex);
+                    final long date = cursor.getLong(creationDateColumnIndex);
+
+                    final int orientation = cursor.getInt(orientationId);
+                    result.add(new LightLabelEntityV2(label, contentUri, new Date(date), orientation));
+                }
+            }
+        }
+        return result;
+    }
+
     @Override
     public List<String> getLabels() {
         final SQLiteDatabase db = dbHelper.getReadableDatabase();

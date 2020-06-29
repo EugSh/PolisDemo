@@ -28,6 +28,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -43,6 +44,7 @@ import com.example.polisdemo.collage.ui.adapter.ThumbnailCallback;
 import com.example.polisdemo.collage.ui.adapter.ThumbnailItem;
 import com.example.polisdemo.collage.ui.adapter.ThumbnailsManager;
 import com.example.polisdemo.collage.view.CollageView;
+import com.example.polisdemo.utils.ExtractorUtils;
 import com.google.android.material.snackbar.Snackbar;
 import com.zomato.photofilters.SampleFilters;
 import com.zomato.photofilters.imageprocessors.Filter;
@@ -58,6 +60,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -65,6 +69,8 @@ public class CollageFragment extends Fragment {
 
     private static final String TAG = "RecyclerViewCollageFragment";
     private static final int PERMISSION_REQUEST_CODE_WRITE = 3;
+    private final AppCompatActivity activity;
+    private final Supplier<Set<String>> selectedImageUris;
 
     private RecyclerView recyclerViewFilters;
     private Context context;
@@ -76,6 +82,11 @@ public class CollageFragment extends Fragment {
     private ImageView selectedImage;
     private Bitmap selectedBitmap;
     private View mLayout;
+
+    public CollageFragment(AppCompatActivity activity, Supplier<Set<String>> selectedImageUris) {
+        this.activity = activity;
+        this.selectedImageUris = selectedImageUris;
+    }
 
     @Nullable
     @Override
@@ -107,7 +118,7 @@ public class CollageFragment extends Fragment {
         btnBackgroundColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ColorPicker picker = new ColorPicker(MainActivity.appCompatActivity);
+                ColorPicker picker = new ColorPicker(activity);
                 picker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
                     @Override
                     public void setOnFastChooseColorListener(int position, int color) {
@@ -127,7 +138,7 @@ public class CollageFragment extends Fragment {
         return rootView;
     }
 
-    private void save(){
+    private void save() {
         Bitmap bitmap = createBitmapFromView(collageView, collageView.getWidth(), collageView.getHeight());
         try {
             saveImage(bitmap, "saved_collage_image_" + random.nextInt());
@@ -175,7 +186,7 @@ public class CollageFragment extends Fragment {
             collageView.addView(v);
             return true;
         });
-        bitmaps = getBitmaps(MainActivity.selectedImages);
+        bitmaps = getBitmaps(selectedImageUris.get());
         bitmaps.forEach((b) -> collageView.addCard(rotateIfNeed(b.getBitmap(), b.getOrientation())));
         TemplateCollage collage = new TemplateCollage(collageView.getWidth(), collageView.getHeight());
         collage.process(collageView.getListCards());
@@ -192,7 +203,7 @@ public class CollageFragment extends Fragment {
         }
         final Matrix matrix = new Matrix();
         matrix.preRotate(orientation);
-        return Bitmap.createBitmap( b, 0, 0, b.getWidth(), b.getHeight(), matrix,false);
+        return Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), matrix, false);
     }
 
     private void displayImages(int templateId) {
@@ -208,22 +219,28 @@ public class CollageFragment extends Fragment {
                 final ExifInterface exifInterface = new ExifInterface(resolver
                         .openFileDescriptor(Uri.parse(uri), "r")
                         .getFileDescriptor());
-                result.add(new BitmapCard(BitmapFactory.decodeFileDescriptor(fileDescriptor),
+                Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                result.add(new BitmapCard(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false),
                         exifToDegrees(exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL))));
+
+//                result.add(new BitmapCard(ExtractorUtils.extractThumbnail(context, uri),
+//                        exifToDegrees(exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL))));
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
 
     private static int exifToDegrees(int exifOrientation) {
-        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) { return 90; }
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {  return 180; }
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {  return 270; }
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
+            return 90;
+        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
+            return 180;
+        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            return 270;
+        }
         return 0;
     }
 
@@ -267,7 +284,6 @@ public class CollageFragment extends Fragment {
             fos = resolver.openOutputStream(Objects.requireNonNull(imageUri));
         } else {
             String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-//            System.out.println(imagesDir);
             File image = new File(imagesDir, name + ".jpeg");
             fos = new FileOutputStream(image);
         }

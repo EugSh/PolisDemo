@@ -10,18 +10,23 @@
     <string name="spinner_sort_type_prompt">Выберите тип сортировки</string>
     <string name="btn_labeling">Маркировка</string>
     <string name="title_collage">Коллажи</string>
-    <string name="filters">Фильтры</string>
+    <string name="filters">ФИЛЬТРЫ</string>
     <string name="background_color">Цвет полотна</string>
     <string name="save_to_gallery">Сохранить</string>
     <string name="select_label">Варианты меток</string>
     <string name="select_sort_type">Отображать по</string>
     <string name="logo_title_text">Фото Асистент</string>
+    <string name="peek_text">Тип отображения</string>
+    <string name="title_action_mode">Выбрано :</string>
+    <string name="title_magic_gallery">Галерея</string>
+    <string name="title_image_fragment">Изображение</string>
+    <string name="peek_text_collage">Специальные возможности</string>
     <string-array name="types_sort_name">
-        <item>День недели</item>
-        <item>День месяца</item>
-        <item>Месяц</item>
-        <item>Год</item>
-        <item>Год и месяц</item>
         <item>Год, месяц, день</item>
+        <item>Год и месяц</item>
+        <item>Год</item>
+        <item>Месяц</item>
+        <item>День месяца</item>
+        <item>День недели</item>
     </string-array>
 </resources>

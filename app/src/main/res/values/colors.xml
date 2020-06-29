@@ -9,4 +9,8 @@
     <color name="ok_orange_light">#F9C8A0</color>
     <color name="titletextcolor">#FFFF00</color>
     <color name="black">#000000</color>
+    <color name="gray">#8B8B8B</color>
+    <color name="darkGray">#5B5B5B</color>
+    <color name="green">#1EFF00</color>
+    <color name="dark_green">#1E6F00</color>
 </resources>

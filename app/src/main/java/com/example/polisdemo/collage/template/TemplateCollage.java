@@ -24,9 +24,9 @@ public class TemplateCollage {
 //            case 2:
 //                process_2(cardViews);
 //                break;
-//            case 3:
-//                process_3(cardViews);
-//                break;
+            case 3:
+                process_3(cardViews);
+                break;
             case 4:
                 process_4(cardViews);
                 break;
@@ -41,12 +41,14 @@ public class TemplateCollage {
         info.maximumScale = 0.5f;
         info.maximumScale = 2f;
         info.deltaX = -230;
-        info.deltaY = -300;
+        info.deltaY = -375;
         MovementUtils.move(cardViews.get(1), info);
+        info.deltaScale = 0.4f;
         info.deltaX = 280;
-        info.deltaY = -240;
+        info.deltaY = -460;
         MovementUtils.move(cardViews.get(3), info);
-        info.deltaX = 225;
+        info.deltaScale = 0.5f;
+        info.deltaX = 220;
         info.deltaY = 270;
         MovementUtils.move(cardViews.get(0), info);
         info.deltaX = -290;
@@ -81,22 +83,20 @@ public class TemplateCollage {
     }
 
     private void process_3(final List<CardView> cardViews) {
-        TransformInfo info = new TransformInfo(0,
-                -100,
-                0,
-                90,
-                0,
-                0,
-                1f,
-                1f);
-        System.out.println(info.toString());
-        MovementUtils.move(cardViews.get(0), info);
-        info.deltaX = margin;
-        info.deltaY = height / 2 - 200;
-        System.out.println(info.toString());
+        TransformInfo info = new TransformInfo();
+        info.deltaScale = 0.45f;
+        info.maximumScale = 0.5f;
+        info.maximumScale = 2f;
+        info.deltaX = -240;
+        info.deltaY = -385;
         MovementUtils.move(cardViews.get(1), info);
-        info.deltaX = width / 2 - 200;
-        System.out.println(info.toString());
+        info.deltaScale = 0.8f;
+        info.deltaX = 0;
+        info.deltaY = 450;
+        MovementUtils.move(cardViews.get(0), info);
+        info.deltaScale = 0.45f;
+        info.deltaX = 250;
+        info.deltaY = -385;
         MovementUtils.move(cardViews.get(2), info);
     }
 

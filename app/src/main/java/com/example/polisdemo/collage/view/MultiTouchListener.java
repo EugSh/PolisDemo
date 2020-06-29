@@ -45,7 +45,6 @@ public class MultiTouchListener implements OnTouchListener {
 //                0.5f,
 //                1f);
 
-//        System.out.println(randomInfo.toString());
 //
 //        MovementUtils.move(view, randomInfo);
     }

@@ -13,6 +13,7 @@ import com.example.polisdemo.gallery.model.db.FireBaseDBServiceImpl;
 import com.example.polisdemo.gallery.model.db.FireBaseSQLHelper;
 import com.example.polisdemo.gallery.model.db.LabelEntity;
 import com.example.polisdemo.gallery.model.firebase.FireBaseLabeler;
+import com.example.polisdemo.translator.Translator;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +51,8 @@ public class LabelingGalleryBenchmarkTest {
                     .getNewestEntry()
                     .orElseGet(() -> new LabelEntity("", "", new Date(0), new Date(0), 0f, 0))
                     .getDate();
-            FireBaseLabeler labeler = new FireBaseLabeler(context.getContentResolver(), newestDate, 0.8f);
+            Translator translator = new Translator();
+            FireBaseLabeler labeler = new FireBaseLabeler(context.getContentResolver(), newestDate, 0.8f, translator);
             CompletableFuture<List<LabelEntity>> future = labeler.getLabelsV2();
             future.thenAccept(entities -> service.putAllEntities(entities));
             future.get();

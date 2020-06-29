@@ -19,8 +19,11 @@ public interface PhotoCategoryExtractor {
         public String extract(PhotoInfoExtractor infoExtractor, Photo photo) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTime(photo.getCreationDate());
-            return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH);
+            final String s = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH);
+            System.out.println(s);
+            return TranslateUtils.translateDayOfWeek(s);
         }
+
 
         @Override
         public Comparator<String> getComparator() {
@@ -28,7 +31,7 @@ public interface PhotoCategoryExtractor {
         }
     }
 
-    class DayOfMonth implements PhotoCategoryExtractor{
+    class DayOfMonth implements PhotoCategoryExtractor {
 
         @Override
         public String extract(PhotoInfoExtractor infoExtractor, Photo photo) {
@@ -48,8 +51,9 @@ public interface PhotoCategoryExtractor {
         public String extract(PhotoInfoExtractor infoExtractor, Photo photo) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTime(photo.getCreationDate());
-            return calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH);
+            return TranslateUtils.translateMonth(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH));
         }
+
 
         @Override
         public Comparator<String> getComparator() {
@@ -71,14 +75,14 @@ public interface PhotoCategoryExtractor {
         }
     }
 
-    class YearMonth implements PhotoCategoryExtractor{
+    class YearMonth implements PhotoCategoryExtractor {
 
         @Override
         public String extract(PhotoInfoExtractor infoExtractor, Photo photo) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTime(photo.getCreationDate());
             return calendar.get(Calendar.YEAR) + " " +
-                    calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH);
+                    TranslateUtils.translateMonth(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH));
         }
 
         @Override
@@ -87,14 +91,14 @@ public interface PhotoCategoryExtractor {
         }
     }
 
-    class YearMonthDay implements PhotoCategoryExtractor{
+    class YearMonthDay implements PhotoCategoryExtractor {
 
         @Override
         public String extract(PhotoInfoExtractor infoExtractor, Photo photo) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTime(photo.getCreationDate());
             return calendar.get(Calendar.YEAR) + " " +
-                    calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)  + " " +
+                    TranslateUtils.translateMonth(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)) + " " +
                     calendar.get(Calendar.DAY_OF_MONTH);
         }
 

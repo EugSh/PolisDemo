@@ -10,6 +10,7 @@ import com.example.polisdemo.gallery.model.db.FireBaseDBServiceImpl;
 import com.example.polisdemo.gallery.model.db.FireBaseSQLHelper;
 import com.example.polisdemo.gallery.model.db.LabelEntity;
 import com.example.polisdemo.gallery.model.db.LightLabelEntity;
+import com.example.polisdemo.gallery.model.db.LightLabelEntityV2;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -36,7 +37,7 @@ public class DBSimpleTest {
     @Before
     public void createDB() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        helper = new FireBaseSQLHelper(context, 2);
+        helper = new FireBaseSQLHelper(context, 13);
         service = new FireBaseDBServiceImpl(helper);
 //        helper.getWritableDatabase().
     }
@@ -98,16 +99,18 @@ public class DBSimpleTest {
 
         for (int i = 0; i < count; i++) {
             entities.add(new LabelEntity("l1", "uri" + i, new Date(), new Date(), i, 0));
-            entities.add(new LabelEntity("l2", "uri" + i, new Date(), new Date(), i , 0));
+            entities.add(new LabelEntity("l2", "uri" + i, new Date(), new Date(), i, 0));
             entities.add(new LabelEntity("l3", "uri" + i, new Date(), new Date(), i, 0));
         }
         service.putAllEntities(entities);
-        Assert.assertEquals("Count of rows not correct", entities.size(), service.size());
-        List<LightLabelEntity> actual = service.getEntities(labels);
-        Set<LightLabelEntity> expected = entities.stream()
-                .map(entity -> new LightLabelEntity(entity.getContentUri(), entity.getPhotoDate(), 0))
-                .collect(Collectors.toSet());
-        Assert.assertTrue("service.getEntities did not return entities by labels " + labels, actual.containsAll(expected));
+//        Assert.assertEquals("Count of rows not correct", entities.size(), service.size());
+//        List<LightLabelEntity> actual = service.getEntities(labels);
+//        Set<LightLabelEntity> expected = entities.stream()
+//                .map(entity -> new LightLabelEntity(entity.getContentUri(), entity.getPhotoDate(), 0))
+//                .collect(Collectors.toSet());
+//        Assert.assertTrue("service.getEntities did not return entities by labels " + labels, actual.containsAll(expected));
+        List<LightLabelEntityV2> entityv2s = service.getOneEntitiesForEachLabel();
+        System.out.println(entityv2s);
     }
 
     @After

@@ -1,78 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.example.polisdemo.collage.view.CollageView
         android:id="@+id/collage_view"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
-        android:background="#FFE673"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="@dimen/margin_small"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
         android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:id="@+id/view_border"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/collage_view"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/margin_small"
-        android:background="@color/colorPrimary"/>
+        android:layout_marginBottom="50dp"
+        android:background="#FFE673" />
 
-    <TextView
-        android:layout_margin="@dimen/margin_small"
-        android:layout_width="wrap_content"
-        android:id="@+id/text_view_title_filter"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_border"
-        android:textSize="16dp"
-        android:text="@string/filters"
-        android:textColor="@color/black"/>
+    <include layout="@layout/bottom_sheet_collage" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_filters"
-        android:layout_margin="@dimen/margin_small"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:background="@color/design_default_color_background"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_title_filter"
-        />
-
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="24dp"
-        android:id="@+id/btn_background_color"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recycler_filters"
-        android:padding="4dp"
-        android:text="@string/background_color"
-        android:textSize="10dp"
-        android:layout_margin="@dimen/margin_small"
-        android:background="@drawable/mybutton"
-        />
-
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="24dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_background_color"
-        android:id="@+id/btn_save"
-        android:textSize="10dp"
-        android:padding="0dp"
-        android:layout_margin="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:background="@drawable/mybutton"
-        android:text="@string/save_to_gallery"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

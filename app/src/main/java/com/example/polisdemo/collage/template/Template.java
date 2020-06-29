@@ -26,7 +26,7 @@ public class Template {
     public List<? extends View> getTemplates(final Context context, final List<Bitmap> bitmaps) {
 
         for (int i = 0; i < shapeOfViews.size(); i++) {
-            CardView cardView = new CardView(context);
+            CardView cardView = new CardView(context, 100, 100);
             cardView.setImageBitmap(bitmaps.get(i));
             ShapeOfView shapeOfView = shapeOfViews.get(i);
             RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(bitmaps.get(i).getWidth(), bitmaps.get(i).getHeight());

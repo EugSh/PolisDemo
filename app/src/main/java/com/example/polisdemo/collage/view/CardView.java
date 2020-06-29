@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.widget.FrameLayout;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
@@ -22,28 +23,35 @@ public class CardView extends AppCompatImageView {
     private static final int PADDING = 0;
     private static final float STROKE_WIDTH = 30.0f;
 
-//    private Paint mBorderPaint;
+    //    private Paint mBorderPaint;
     private MultiTouchListener mtl;
     private GestureDetector gestureListener;
     private OnTouchListener doubleClickListener;
     private OnTouchListener singleTouchClickListener;
     private Paint mBorderPaint;
 
-    public CardView(Context context) {
-        this(context, null);
+    public CardView(Context context, int width, int height) {
+        this(context, null, width, height);
 //        init(context);
     }
 
-    public CardView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+    public CardView(Context context, AttributeSet attrs, int width, int height) {
+        this(context, attrs, 0, width, height);
 //        init(context);
 //        setPadding(PADDING, PADDING, PADDING, PADDING);
     }
 
-    public CardView(Context context, AttributeSet attrs, int defStyle) {
+    public CardView(Context context, AttributeSet attrs, int defStyle, int width, int height) {
         super(context, attrs, defStyle);
         init(context);
         initBorderPaint();
+        initLayoutParam(width, height);
+    }
+
+    private void initLayoutParam(int width, int height) {
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
+        setLayoutParams(layoutParams);
+
     }
 
     @SuppressLint("ClickableViewAccessibility")

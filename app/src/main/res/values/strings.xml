@@ -10,18 +10,25 @@
     <string name="spinner_sort_type_prompt">Select sorting type</string>
     <string name="btn_labeling">Labeling</string>
     <string name="title_collage">Collage</string>
-    <string name="filters">Filters</string>
+    <string name="filters">FILTERS</string>
     <string name="background_color">background color</string>
     <string name="save_to_gallery">Save to gallery</string>
     <string name="select_label">Select label</string>
     <string name="select_sort_type">Select sort type</string>
     <string name="logo_title_text">Photo Assistant</string>
+    <string name="peek_text">Visual Type</string>
+    <string name="title_action_mode">Selected :</string>
+    <string name="tag_uri_key" translatable="false">TAG_URI_KEY</string>
+    <string name="tag_label_key" translatable="false">TAG_URI_KEY</string>
+    <string name="title_magic_gallery">Gallery</string>
+    <string name="title_image_fragment">Image</string>
+    <string name="peek_text_collage">Special</string>
     <string-array name="types_sort_name">
-        <item>Day of week</item>
-        <item>Day of month</item>
-        <item>Month</item>
-        <item>Year</item>
-        <item>Year month</item>
         <item>Year month day</item>
+        <item>Year month</item>
+        <item>Year</item>
+        <item>Month</item>
+        <item>Day of month</item>
+        <item>Day of week</item>
     </string-array>
 </resources>

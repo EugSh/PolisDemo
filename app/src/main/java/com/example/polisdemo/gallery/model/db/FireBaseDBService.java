@@ -1,6 +1,5 @@
 package com.example.polisdemo.gallery.model.db;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +9,8 @@ public interface FireBaseDBService {
     List<LightLabelEntity> getEntities(final String label);
 
     List<LightLabelEntity> getEntities(final List<String> labels);
+
+    List<LightLabelEntityV2> getOneEntitiesForEachLabel();
 
     List<String> getLabels();
 

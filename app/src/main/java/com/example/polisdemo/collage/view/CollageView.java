@@ -149,7 +149,7 @@ public class CollageView extends RelativeLayout {
 	 */
 	public void addCard(Bitmap bm) {
 
-		CardView card = new CardView(mContext);
+		CardView card = new CardView(mContext, bm.getWidth(), bm.getHeight());
 		Canvas canvas = new Canvas(bm);
 		int width = Math.max(bm.getWidth(), bm.getHeight()) / 100 * 2;
 		mBorderPaint.setStrokeWidth(width);
@@ -161,29 +161,6 @@ public class CollageView extends RelativeLayout {
 		addViewToList(card);
 	}
 
-	/**
-	 * Add Card from Drawable
-	 * 
-	 * @param drawable
-	 */
-	public void addCard(Drawable drawable) {
-
-		CardView card = new CardView(mContext);
-		card.setImageDrawable(drawable);
-		addViewToList(card);
-	}
-
-	/**
-	 * Add Card from resources
-	 * 
-	 * @param resId
-	 */
-	public void addCard(int resId) {
-
-		CardView card = new CardView(mContext);
-		card.setImageResource(resId);
-		addViewToList(card);
-	}
 
 	/**
 	 * Create a Collage from list of Bitmaps
@@ -194,31 +171,6 @@ public class CollageView extends RelativeLayout {
 	public void createCollageBitmaps(List<Bitmap> bmList) {
 		for (Bitmap bm : bmList) {
 			addCard(bm);
-		}
-	}
-
-	/**
-	 * Create a Collage from list of Drawables
-	 * 
-	 * @param drawableList
-	 *            List of Drawables
-	 */
-	public void createCollageDrawables(List<Drawable> drawableList) {
-		for (Drawable drawable : drawableList) {
-			addCard(drawable);
-		}
-	}
-
-	/**
-	 * Create a Collage from list of Resources
-	 * 
-	 * @param resIdList
-	 *            List of resources
-	 */
-	public void createCollageResources(List<Integer> resIdList) {
-
-		for (Integer res : resIdList) {
-			addCard(res.intValue());
 		}
 	}
 

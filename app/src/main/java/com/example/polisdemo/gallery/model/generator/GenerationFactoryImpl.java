@@ -28,11 +28,11 @@ public class GenerationFactoryImpl implements GenerationFactory<Photo> {
         this.dbService = dbService;
     }
 
-    public static GenerationFactory<Photo> getInstanse(final Context context, final boolean hasReadPermission, final FireBaseDBService dbService){
+    public static GenerationFactory<Photo> getInstanse(final Context context, final boolean hasReadPermission, final FireBaseDBService dbService) {
         if (instanse == null) {
             instanse = new GenerationFactoryImpl(context, hasReadPermission, dbService);
         }
-        if ((!instanse.hasReadPermission) && hasReadPermission){
+        if ((!instanse.hasReadPermission) && hasReadPermission) {
             instanse.hasReadPermission = hasReadPermission;
             instanse.photoGenerator = new ProdPhotoGenerator(context);
         }

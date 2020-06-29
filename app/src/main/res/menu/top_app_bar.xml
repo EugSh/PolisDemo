@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/app_bar_item_gallery"
+        android:icon="@drawable/ic_collections_24px"
+        android:title="@string/title_gallery"
+        android:contentDescription="description_favorite"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/app_bar_item_magic_gallery"
+        android:icon="@drawable/ic_dashboard_24px"
+        android:title="@string/title_collage"
+        android:contentDescription="description_search"
+        app:showAsAction="ifRoom" />
+</menu>

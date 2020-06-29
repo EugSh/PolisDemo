@@ -13,7 +13,14 @@ public class CategoryComparator {
             {"Thursday", "3"},
             {"Friday", "4"},
             {"Saturday", "5"},
-            {"Sunday", "6"}
+            {"Sunday", "6"},
+            {"Понедельник", "0"},
+            {"Вторник", "1"},
+            {"Среда", "2"},
+            {"Четверг", "3"},
+            {"Пятница", "4"},
+            {"Суббота", "5"},
+            {"Воскресенье", "6"}
     }).collect(Collectors.toMap(strings -> strings[0], strings -> Integer.parseInt(strings[1])));
 
     private static final Map<String, Integer> month = Stream.of(new String[][]{
@@ -28,7 +35,19 @@ public class CategoryComparator {
             {"September", "8"},
             {"October", "9"},
             {"November", "10"},
-            {"December", "11"}
+            {"December", "11"},
+            {"Январь", "0"},
+            {"Февраль", "1"},
+            {"Март", "2"},
+            {"Апрель", "3"},
+            {"Май", "4"},
+            {"Июнь", "5"},
+            {"Июль", "6"},
+            {"Август", "7"},
+            {"Сентябрь", "8"},
+            {"Октябрь", "9"},
+            {"Ноябрь", "10"},
+            {"Декабрь", "11"},
     }).collect(Collectors.toMap(strings -> strings[0], strings -> Integer.parseInt(strings[1])));
 
 
